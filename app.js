@@ -11,5 +11,9 @@ app.get('/', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
+const testRoute = require('./src/routes/testRoute');
+app.use('/api', testRoute);
+
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
 
