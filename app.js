@@ -21,6 +21,10 @@ const acoesRoutes = require("./src/routes/acoes.routes");
 app.use('/api', testRoute);
 app.use("/acoes", acoesRoutes);
 
+const usuariosRoutes = require("./src/routes/usuarios.routes");
+app.use("/usuarios", usuariosRoutes);
+
+
 // Swagger
 const setupSwagger = require("./src/swagger");
 setupSwagger(app);
