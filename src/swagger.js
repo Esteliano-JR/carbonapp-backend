@@ -9,21 +9,16 @@ const options = {
       version: "1.0.0",
       description: "Documentação da API do CarbonApp",
     },
-    servers: [
-      {
-        url: "http://localhost:3000", // URL do backend local
-      },
-    ],
+    servers: [{ url: "http://localhost:3000" }],
   },
-  apis: ["./src/routes/*.js"], // Pega anotações das rotas
+  apis: ["./src/routes/*.js"],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
-function setupSwagger(app) {
+module.exports = (app) => {
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-}
+};
 
-module.exports = setupSwagger;
 
 
