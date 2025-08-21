@@ -69,10 +69,4 @@ MIT
 
 ---
 
-### 🔹 Próximo passo no seu backend
 
-1. Salve esse conteúdo em `backend/README.md`.  
-2. Se ainda não puxou o remoto, rode:
-
-```powershell
-git pull origin main --allow-unrelated-histories
