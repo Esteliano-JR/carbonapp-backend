@@ -15,3 +15,5 @@ dist/
 build/
 .vscode/
 .idea/
+
+/src/generated/prisma
