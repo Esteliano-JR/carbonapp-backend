@@ -19,5 +19,51 @@ model User {
   name      String
   email     String   @unique
   createdAt DateTime @default(now())
+
+  acoes         Acao[]
+  auth          Auth?
+  resgates      Resgate[]
+  logAtividades LogAtividade[]
 }
 
+model Acao {
+  id        Int    @id @default(autoincrement())
+  descricao String
+  pontos    Int
+  usuario   User   @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+}
+
+model Auth {
+  id       Int    @id @default(autoincrement())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int    @unique
+  password String // hash da senha
+}
+
+model Recompensa {
+  id          Int       @id @default(autoincrement())
+  titulo      String
+  descricao   String
+  custoPontos Int
+  createdAt   DateTime  @default(now())
+  resgates    Resgate[]
+}
+
+model Resgate {
+  id           Int        @id @default(autoincrement())
+  usuario      User       @relation(fields: [usuarioId], references: [id])
+  usuarioId    Int
+  recompensa   Recompensa @relation(fields: [recompensaId], references: [id])
+  recompensaId Int
+  createdAt    DateTime   @default(now())
+}
+
+model LogAtividade {
+  id        Int      @id @default(autoincrement())
+  usuario   User     @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+  tipo      String // exemplo: "AÇÃO", "RESGATE", "LOGIN"
+  detalhes  String?
+  createdAt DateTime @default(now())
+}
