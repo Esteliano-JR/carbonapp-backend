@@ -1,10 +1,25 @@
-exports.listarRanking = (req, res) => {
-  // Aqui você buscaria usuários no banco de dados e ordenaria pelos pontos
-  const ranking = [
-    { usuarioId: "1", nome: "Esteliano", pontos: 150 },
-    { usuarioId: "2", nome: "Maria", pontos: 120 },
-    { usuarioId: "3", nome: "João", pontos: 100 },
-  ];
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
-  res.json(ranking);
+exports.listarRanking = async (req, res) => {
+  try {
+    const ranking = await prisma.user.findMany({
+      include: { acoes: true },
+    });
+
+    // calcular pontos por usuário
+    const rankingCalc = ranking.map(user => {
+      const pontosTotais = user.acoes.reduce((acc, acao) => acc + acao.pontos, 0);
+      return { usuarioId: user.id, nome: user.name, pontos: pontosTotais };
+    });
+
+    // ordenar por pontos
+    rankingCalc.sort((a, b) => b.pontos - a.pontos);
+
+    res.json(rankingCalc);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao gerar ranking" });
+  }
 };
+
+

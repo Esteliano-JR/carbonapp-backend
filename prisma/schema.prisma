@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -17,10 +16,16 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   name      String
+  cpf       String   @unique
   email     String   @unique
+  rua       String
+  complemento String?
+  cidade    String
+  cep       String
   createdAt DateTime @default(now())
 
-  acoes         Acao[]
+  // RELACIONAMENTOS
+  usuarioAcoes  UsuarioAcao[]
   auth          Auth?
   resgates      Resgate[]
   logAtividades LogAtividade[]
@@ -30,15 +35,26 @@ model Acao {
   id        Int    @id @default(autoincrement())
   descricao String
   pontos    Int
-  usuario   User   @relation(fields: [usuarioId], references: [id])
+
+  // Quem realizou essa ação (histórico)
+  usuarios UsuarioAcao[]
+}
+
+// HISTÓRICO: usuário X realizou ação Y em data Z
+model UsuarioAcao {
+  id        Int      @id @default(autoincrement())
+  usuario   User     @relation(fields: [usuarioId], references: [id])
   usuarioId Int
+  acao      Acao     @relation(fields: [acaoId], references: [id])
+  acaoId    Int
+  createdAt DateTime @default(now())
 }
 
 model Auth {
   id       Int    @id @default(autoincrement())
   user     User   @relation(fields: [userId], references: [id])
   userId   Int    @unique
-  password String // hash da senha
+  password String
 }
 
 model Recompensa {
@@ -63,7 +79,7 @@ model LogAtividade {
   id        Int      @id @default(autoincrement())
   usuario   User     @relation(fields: [usuarioId], references: [id])
   usuarioId Int
-  tipo      String // exemplo: "AÇÃO", "RESGATE", "LOGIN"
+  tipo      String
   detalhes  String?
   createdAt DateTime @default(now())
 }

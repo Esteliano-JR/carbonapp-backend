@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const rankingController = require("../controllers/rankingController");
 
 /**
  * @swagger
@@ -27,14 +28,7 @@ const router = express.Router();
  *                     type: integer
  *                     example: 150
  */
-router.get("/", (req, res) => {
-  const ranking = [
-    { usuarioId: "1", nome: "Esteliano", pontos: 150 },
-    { usuarioId: "2", nome: "Maria", pontos: 120 },
-    { usuarioId: "3", nome: "João", pontos: 100 },
-  ];
-
-  res.json(ranking);
-});
+// GET /ranking → Ranking dinâmico
+router.get("/", rankingController.listarRanking);
 
 module.exports = router;
