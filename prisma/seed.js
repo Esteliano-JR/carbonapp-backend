@@ -17,7 +17,21 @@ async function main() {
     },
   });
 
-  // ações pré-definidas
+  // ações pré-definidas 
+
+  await prisma.material.createMany({
+  data: [
+    { nome: "Alumínio" },
+    { nome: "Plástico" },
+    { nome: "Cobre" },
+    { nome: "Papelão" },
+    { nome: "Óleo" }
+  ],
+  skipDuplicates: true
+});
+
+
+
   await prisma.acao.createMany({
     data: [
       { descricao: "Reciclar plástico", pontos: 10 },
@@ -28,6 +42,42 @@ async function main() {
     skipDuplicates: true,
   });
 
+  // parceiro de teste
+  const parceiro = await prisma.parceiro.upsert({
+  where: { email: "parceiro@eco.local" },
+  update: {},
+  create: {
+    nome: "Coleta Verde",
+    email: "parceiro@eco.local",
+    telefone: "91999999999",
+    cidade: "Belém",
+    estado: "PA"
+  }
+});
+
+// agendamento de teste
+const agendamento = await prisma.agendamento.create({
+  data: {
+    usuarioId: user.id,
+    parceiroId: parceiro.id,
+    nomeCompleto: "Usuário Demo",
+    telefone: "91988888888",
+    endereco: "Rua Teste, 101",
+    data: new Date("2025-09-10"),
+    horario: "14:00",
+    observacoes: "5 sacos de plástico e óleo usado"
+  }
+});
+
+const materiais = await prisma.material.findMany();
+await prisma.agendamentoMaterial.createMany({
+  data: materiais.map(m => ({
+    agendamentoId: agendamento.id,
+    materialId: m.id
+  })),
+  skipDuplicates: true
+});
+  
   // recompensas de teste
   await prisma.recompensa.createMany({
     data: [

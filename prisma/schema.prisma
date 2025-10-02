@@ -29,6 +29,7 @@ model User {
   auth          Auth?
   resgates      Resgate[]
   logAtividades LogAtividade[]
+  agendamentos Agendamento[]
 }
 
 model Acao {
@@ -82,4 +83,48 @@ model LogAtividade {
   tipo      String
   detalhes  String?
   createdAt DateTime @default(now())
+}
+
+model Parceiro {
+  id        Int         @id @default(autoincrement())
+  nome      String
+  email     String      @unique
+  telefone  String
+  cidade    String
+  estado    String
+  createdAt DateTime    @default(now())
+
+  agendamentos Agendamento[]
+}
+
+model Material {
+  id          Int           @id @default(autoincrement())
+  nome        String
+  agendamentos AgendamentoMaterial[]
+}
+
+model Agendamento {
+  id           Int           @id @default(autoincrement())
+  usuario      User          @relation(fields: [usuarioId], references: [id])
+  usuarioId    Int
+  parceiro     Parceiro?     @relation(fields: [parceiroId], references: [id])
+  parceiroId   Int?
+  nomeCompleto String
+  telefone     String
+  endereco     String
+  data         DateTime
+  horario      String
+  observacoes  String?
+  status       String        @default("PENDENTE")
+  createdAt    DateTime      @default(now())
+
+  materiais    AgendamentoMaterial[]
+}
+
+model AgendamentoMaterial {
+  id            Int         @id @default(autoincrement())
+  agendamento   Agendamento @relation(fields: [agendamentoId], references: [id])
+  agendamentoId Int
+  material      Material    @relation(fields: [materialId], references: [id])
+  materialId    Int
 }
