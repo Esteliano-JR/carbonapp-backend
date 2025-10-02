@@ -1,4 +1,3 @@
-// controllers/agendamentoController.js
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
@@ -101,5 +100,36 @@ exports.listarPorUsuario = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao listar agendamentos" });
+  }
+};
+
+// listar por parceiro
+exports.listarPorParceiro = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const agendamentos = await prisma.agendamento.findMany({
+      where: { parceiroId: Number(id) },
+      include: {
+        materiais: {
+          include: { material: true }
+        }
+      },
+      orderBy: { data: "desc" }
+    });
+
+    const resultado = agendamentos.map(ag => ({
+      id: ag.id,
+      data: ag.data,
+      horario: ag.horario,
+      status: ag.status,
+      observacoes: ag.observacoes,
+      materiais: ag.materiais.map(m => m.material.nome)
+    }));
+
+    res.json(resultado);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao listar agendamentos por parceiro" });
   }
 };
