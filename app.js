@@ -21,6 +21,7 @@ const recompensasRoutes = require("./src/routes/recompensas.routes");
 const resgatesRoutes = require("./src/routes/resgates.routes");
 const logsRoutes = require("./src/routes/logs.routes");
 const agendamentoRoutes = require('./src/routes/agendamento.routes');
+const pontosRoutes = require('./src/routes/pontos.routes');
 
 
 app.use('/api', testRoute);
@@ -29,7 +30,7 @@ app.use("/recompensas", recompensasRoutes);
 app.use("/resgates", resgatesRoutes);
 app.use("/logs", logsRoutes);
 app.use('/agendamento', agendamentoRoutes);
-
+app.use('/pontos', pontosRoutes);
 const usuariosRoutes = require("./src/routes/usuarios.routes");
 app.use("/usuarios", usuariosRoutes);
 
