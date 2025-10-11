@@ -22,6 +22,7 @@ model User {
   complemento String?
   cidade    String
   cep       String
+  pontos     Int      @default(0)
   createdAt DateTime @default(now())
 
   // RELACIONAMENTOS
