@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
 
@@ -38,8 +39,10 @@ exports.login = async (req, res) => {
 
     const senhaValida = await bcrypt.compare(password, usuario.auth.password);
     if (!senhaValida) return res.status(401).json({ error: "Senha incorreta" });
+     const token = jwt.sign({ id: usuario.id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
-    res.json({ message: "Login bem-sucedido", usuarioId: usuario.id });
+
+    res.json({ message: "Login bem-sucedido", usuarioId: usuario.id, token });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "Erro ao fazer login" });
