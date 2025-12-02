@@ -18,6 +18,7 @@ async function main() {
   });
 
   // ações pré-definidas 
+  await prisma.material.deleteMany(); // limpa antes
 
   await prisma.material.createMany({
   data: [

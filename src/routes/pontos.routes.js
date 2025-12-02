@@ -2,11 +2,13 @@ const express = require('express');
 const router = express.Router();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const { calcularSaldoPontos } = require("../services/pontos.service");
 
 router.get('/:usuarioId', async (req, res) => {
   const { usuarioId } = req.params;
 
   try {
+    console.log("Buscando pontos para o ID:", usuarioId);
     const usuario = await prisma.user.findUnique({
       where: { id: Number(usuarioId) },
       include: {
@@ -19,12 +21,12 @@ router.get('/:usuarioId', async (req, res) => {
       return res.status(404).json({ error: 'Usuário não encontrado' });
     }
 
-    const pontos = usuario.pontos;
+    const pontos = await calcularSaldoPontos(usuario.id);
     const meta = 1500;
     const impacto = {
-      materialReciclado: '15.2kg', // pode ser calculado futuramente
-      oleoColetado: '8.5L',
-      coletasRealizadas: usuario.agendamentos.length
+      materialReciclado: usuario.logAtividades?.length * 1.5 + "kg" || "0kg", // pode ser calculado futuramente
+      oleoColetado: usuario.agendamentos?.length * 0.5 + "L" || "0L",
+      coletasRealizadas: usuario.agendamentos.length || 0
     };
 
     res.json({ pontos, meta, impacto });

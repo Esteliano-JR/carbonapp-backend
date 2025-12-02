@@ -1,9 +1,34 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
+
+
 exports.criarAgendamento = async (req, res) => {
   try {
+    console.log("Chegou no backend:", req.body);
     const { usuarioId, nomeCompleto, telefone, endereco, data, horario, observacoes, materiais } = req.body;
+    
+    if (!data || isNaN(Date.parse(data))) {
+  return res.status(400).json({ error: "Data inválida" });
+}
+    const usuario = await prisma.user.findUnique({
+  where: { id: usuarioId }
+});
+
+if (!usuario) {
+  return res.status(400).json({ error: "Usuário não encontrado" });
+}
+
+const materiaisValidos = await prisma.material.findMany({
+  where: { id: { in: materiais } }
+});
+
+if (materiaisValidos.length !== materiais.length) {
+  return res.status(400).json({ error: "Um ou mais materiais são inválidos" });
+}
+
+console.log("Payload recebido:", req.body);
+
 
     const agendamento = await prisma.agendamento.create({
       data: {
@@ -11,7 +36,7 @@ exports.criarAgendamento = async (req, res) => {
         nomeCompleto,
         telefone,
         endereco,
-        data,
+        data: new Date(data),
         horario,
         observacoes,
         materiais: {
@@ -23,7 +48,7 @@ exports.criarAgendamento = async (req, res) => {
 
     res.status(201).json(agendamento);
   } catch (error) {
-    console.error(error);
+    console.error("Erro ao criar agendamento:", error);
     res.status(500).json({ erro: 'Erro ao criar agendamento' });
   }
 };
